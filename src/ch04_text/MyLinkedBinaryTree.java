@@ -14,12 +14,22 @@ public class MyLinkedBinaryTree<AnyType> {
         private Node<AnyType> left; // 指向左儿子
         private Node<AnyType> right; // 指向右儿子
         private int pushCounter; // 入栈次数
+        private int height; // 该节点在树中的高度
 
         public Node(AnyType data, Node<AnyType> left, Node<AnyType> right) {
             this.data = data;
             this.left = left;
             this.right = right;
             pushCounter = 0;
+            height = 0;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
         }
 
         public int getPushCounter() {
@@ -96,7 +106,9 @@ public class MyLinkedBinaryTree<AnyType> {
         Node<AnyType> tempTree = root;
         MyLinkedStack<Node<AnyType>> stack = new MyLinkedStack<>();
         while(tempTree != null || !stack.isEmpty()){
-            System.out.println(tempTree.data);
+            if(tempTree != null){
+                System.out.println(tempTree.data);
+            }
             // 将子树的所有左儿子入栈
             while(tempTree != null){
                 stack.push(tempTree);
@@ -115,7 +127,7 @@ public class MyLinkedBinaryTree<AnyType> {
     }
     public void preOrderTraversal(Node<AnyType> root){
         if(root != null){
-            System.out.println(root.data);
+            System.out.println("data: " + root.data + ", height: " + root.getHeight());
             preOrderTraversal(root.left);
             preOrderTraversal(root.right);
         }
@@ -248,6 +260,29 @@ public class MyLinkedBinaryTree<AnyType> {
         }
     }
 
+    // 设置所有节点的高度
+    public void setAllNodeHeight(){
+        // 遍历整个二叉树
+        Node<AnyType> tempTree = root;
+        MyLinkedStack<Node<AnyType>> stack = new MyLinkedStack<>();
+        while(tempTree != null || !stack.isEmpty()){
+            if(tempTree != null){
+                // 对节点进行操作
+                System.out.println(tempTree.data);
+            }
+            // 将子树的所有左儿子入栈
+            while(tempTree != null){
+                stack.push(tempTree);
+                tempTree = tempTree.left;
+            }
+            // 当左分支无法访问时，从栈中弹出一个节点，以他作为一个子树的根节点，继续访问他的左子树
+            tempTree = stack.pop();
+            tempTree.setHeight(getHeight(tempTree));
+            tempTree = tempTree.right;
+        }
+
+    }
+
     //基于层序遍历生成一个二叉树
     public void createInLevelOrder(AnyType[] input){
         Node<AnyType> tempTree = root;
@@ -292,6 +327,9 @@ public class MyLinkedBinaryTree<AnyType> {
                 break;
             }
         }
+
+        // 设置所有节点的高度
+        setAllNodeHeight();
     }
 
     // 创建单个节点的二叉树
