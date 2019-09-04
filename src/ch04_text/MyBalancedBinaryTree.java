@@ -172,7 +172,7 @@ public class MyBalancedBinaryTree<AnyType> extends MyLinkedBinaryTree<AnyType> {
                 }
             }
         }
-        return root;
+        return balance(root);
     }
 
     // 查找二叉搜索树上的最小节点
