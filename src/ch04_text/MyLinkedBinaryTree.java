@@ -66,7 +66,7 @@ public class MyLinkedBinaryTree<AnyType> {
     }
 
     private Node<AnyType> root; // 指向树的根节点
-    private int size; // 书的大小
+    private int size; // 树的大小
     private static String NULLNODE = "0"; // 标识空节点
 
     public MyLinkedBinaryTree(){
@@ -75,6 +75,10 @@ public class MyLinkedBinaryTree<AnyType> {
 
     public Node<AnyType> getRoot(){
         return root;
+    }
+
+    public void setRoot(Node<AnyType> root){
+        this.root = root;
     }
 
     private void create(){
