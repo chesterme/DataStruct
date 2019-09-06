@@ -27,6 +27,10 @@ public class MyMinHeap<AnyType> {
         return data;
     }
 
+    public int getSize(){
+        return size;
+    }
+
     // 是否为空堆
     public boolean isEmpty(){
         return size == 0;
@@ -70,7 +74,7 @@ public class MyMinHeap<AnyType> {
     }
 
     // 从最大堆中删除最小元素
-    public AnyType deleteMix(){
+    public AnyType deleteMin(){
         if(isEmpty()){
             return null;
         }

@@ -15,6 +15,7 @@ public class MyLinkedBinaryTree<AnyType> {
         private Node<AnyType> right; // 指向右儿子
         private int pushCounter; // 入栈次数
         private int height; // 该节点在树中的高度
+        private int weight; // 权重
 
         public Node(AnyType data, Node<AnyType> left, Node<AnyType> right) {
             this.data = data;
@@ -22,6 +23,15 @@ public class MyLinkedBinaryTree<AnyType> {
             this.right = right;
             pushCounter = 0;
             height = 0;
+            weight = 0;
+        }
+
+        public int getWeight(){
+            return weight;
+        }
+
+        public void setWeight(int weight){
+            this.weight = weight;
         }
 
         public int getHeight() {

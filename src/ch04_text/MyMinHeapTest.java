@@ -11,7 +11,7 @@ public class MyMinHeapTest {
 
         heap.printAll();
         for(int i = 1; i <= 20; i++){
-            System.out.println("current min: " +heap.deleteMix());
+            System.out.println("current min: " +heap.deleteMin());
             heap.printAll();
         }
 
