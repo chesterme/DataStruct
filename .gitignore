@@ -1,0 +1,7 @@
+// 写入需要忽略的文件
+.idea/
+.git/
+out/
+.vscode/
+.gitignore
+DataStruct.iml
