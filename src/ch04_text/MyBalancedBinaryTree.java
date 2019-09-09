@@ -226,4 +226,22 @@ public class MyBalancedBinaryTree<AnyType> extends MyLinkedBinaryTree<AnyType> {
         }
         return result;
     }
+
+    // 判断某个元素x是否存在于树中
+    public boolean isExist(AnyType x){
+        boolean flag = false;
+        Node<AnyType> tempRoot = getRoot();
+        while(tempRoot.getData() != null){
+            if(comparator.compare(tempRoot.getData(), x) < 0){
+                tempRoot = tempRoot.getRight();
+            }
+            else if(comparator.compare(tempRoot.getData(), x) > 0){
+                tempRoot = tempRoot.getLeft();
+            }
+            else{
+                flag = true;
+            }
+        }
+        return flag;
+    }
 }
