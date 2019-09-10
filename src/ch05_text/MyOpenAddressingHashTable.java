@@ -2,12 +2,13 @@ package ch05_text;
 
 /**
  * 散列表
+ * 使用开放地址法处理冲突
  */
 public class MyOpenAddressingHashTable<AnyType> {
 
     private static final int MAX_SIZE = 100000; // 允许开辟的散列表最大长度
     private int tableSize; // 散列表最大长度
-    private MyTableNode<AnyType>[] tables;
+    private MyTableNode<AnyType>[] tables;  // 没有办法创建一个泛型数组
     private MyHash<AnyType> myHash;
 
     public MyOpenAddressingHashTable(int tableSize, MyHash<AnyType> myHash){
@@ -16,14 +17,15 @@ public class MyOpenAddressingHashTable<AnyType> {
     }
 
     // 创建一个散列表
-    private void create(int tableSize){
+    private void create(int size){
         // 返回一个大于tableSize但不超过MAX_SIZE的最小素数
-        tableSize = nextPrime(tableSize);
-        tables = (MyTableNode<AnyType>[]) new Object[tableSize];
+        tableSize = nextPrime(size);
+        tables = new MyTableNode[tableSize];
         // 初始化散列表中元素的内容
         for(int i = 0; i < tableSize; i++){
-            tables[i].setData(null);
-            tables[i].setInfo(MyHashEntryType.EMPTY);
+            tables[i] = new MyTableNode<>();
+//            tables[i].setData(null);
+//            tables[i].setInfo(MyHashEntryType.EMPTY);
         }
     }
 
@@ -34,7 +36,7 @@ public class MyOpenAddressingHashTable<AnyType> {
         int p = tableSize % 2 == 0 ? tableSize + 1 : tableSize + 2;
 
         while(p <= MAX_SIZE){
-            for(i = (int)Math.sqrt(p); i > 2; ){
+            for(i = (int)Math.sqrt(p); i > 2; i--){
                 // p不是素数
                 if(p % i == 0){
                     break;
@@ -60,17 +62,22 @@ public class MyOpenAddressingHashTable<AnyType> {
 
         // 通过散列函数找到关键字key对应的存储位置
         currentPosition = newPosition = myHash.hash(x, tableSize);
+        // 如果该位置上的节点可用，则直接返回
+        if(tables[newPosition].getInfo() != MyHashEntryType.LEGITIMATE){
+            return currentPosition;
+        }
         // 如果该位置上的元素不为空，并且不是想要找的元素时，即发生冲突时
-        while(!tables[newPosition].getData().equals(x) && tables[newPosition].getInfo() != MyHashEntryType.EMPTY){
+        while(tables[newPosition].getData() != null &&!tables[newPosition].getData().equals(x) && tables[newPosition].getInfo() != MyHashEntryType.EMPTY){
             // 统计冲突次数
             collisionCounter++;
-            // 如果是奇数次冲突
+            // 如果是奇数次冲突，设置存储位置为hash值 + q^2(偏移量)
             if(collisionCounter % 2 == 1){
                 newPosition = currentPosition + (collisionCounter + 1) * (collisionCounter + 1) / 4;
                 if(newPosition >= tableSize){
                     newPosition %= tableSize;
                 }
             }
+            // 如果是偶数次冲突，设置存储位置为hash值 - q^2(偏移量)
             else{
                 newPosition = currentPosition - collisionCounter * collisionCounter / 4;
                 while(newPosition < 0){

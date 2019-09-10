@@ -9,6 +9,10 @@ public class MyTableNode<AnyType> {
     private AnyType data; // 单元素中保存的数据
     private MyHashEntryType info; // 单元素中的状态
 
+    public MyTableNode(){
+        this(null, MyHashEntryType.EMPTY);
+    }
+
     public MyTableNode(AnyType data, MyHashEntryType info) {
         this.data = data;
         this.info = info;

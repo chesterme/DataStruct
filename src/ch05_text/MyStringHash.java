@@ -7,6 +7,12 @@ package ch05_text;
  */
 public class MyStringHash extends MySimpleStringHash {
 
+    /**
+     *
+     * @param key, 假定字符串长度不超过8，由大小写字母和空格符组成
+     * @param tableSize，散列表的大小
+     * @return
+     */
     @Override
     public int hash(String key, int tableSize) {
         char[] chars = key.toCharArray();
