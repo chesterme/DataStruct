@@ -1,12 +1,18 @@
 package ch06_text;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
 
 public class MyAdjacencyMatrixGraphTest {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws FileNotFoundException {
 
-        Scanner scanner = new Scanner(System.in);
+        File file = new File("resources/graphTest.txt");
+        FileReader reader = new FileReader(file);
+        Scanner scanner = new Scanner(reader);
+
         System.out.printf("输入顶点个数：\n");
         int vertexNum = scanner.nextInt();
 
@@ -34,6 +40,19 @@ public class MyAdjacencyMatrixGraphTest {
         int startIndex = 0;
 //        myGraph.getMGraph().bfs(startIndex);
         myGraph.getMGraph().dfs(startIndex);
+
+        System.out.println("++++++++++++++++++++++++++");
+        int totalWeight = myGraph.getMGraph().prim();
+        System.out.println("最小权值和为：" + totalWeight);
+        System.out.println("++++++++++++++++++++++++++");
+        System.out.println("最小生成树为：");
+        int[] parent = myGraph.getMGraph().getParent();
+        for(int i = 0; i < parent.length; i++){
+            System.out.printf("下标为：%10d\t，其值为：%10d\n", i, parent[i]);
+        }
+        System.out.println("++++++++++++++++++++++++++");
+        MyAdjacencyListGraph<String> mst = myGraph.getMGraph().getMst();
+        mst.bfs(startIndex);
     }
 
 }

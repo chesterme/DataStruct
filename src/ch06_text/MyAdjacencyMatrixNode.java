@@ -7,13 +7,17 @@ import ch03_text.MyLinkedQueue;
  */
 public class MyAdjacencyMatrixNode<AnyType> {
 
+    private static final int ERROR = -1; // 错误标记，表示生成树不存在
     private static final int  MAX_VERTEX_NUM = 100; // 最大顶点数
+    private static final int INFINITY = Integer.MAX_VALUE; // 表示两个顶点之间不相连
     private int vertexNum; // 顶点数
     private int edgeNum; // 边数
     private int[][] weights; // 临界矩阵
     private AnyType[] data; // 顶点数据
     private boolean[] visits; // 标志节点是否已经被访问了
-    private static final int INFINITY = Integer.MAX_VALUE; // 表示两个顶点之间不相连
+    private MyAdjacencyListGraph<AnyType> mst; // 使用邻接表表示最小生成树
+    private int[] dist; // 保存顶点Vj到顶点集Vt的边的最小权值
+    private int[] parent; // 保存当前树的顶点生长过程
 
     public MyAdjacencyMatrixNode(int vertexNum, int edgeNum){
         this.vertexNum = vertexNum;
@@ -135,5 +139,103 @@ public class MyAdjacencyMatrixNode<AnyType> {
                 }
             }
         }
+    }
+
+    /**
+     * 从当前顶点开始，找出一条与其邻接的权值最小的另一个顶点
+     * @param dist，记录与当前顶点邻接的所有顶点的权值
+     * @return
+     */
+    private int findMinDist(int[] dist){
+        int minIndex = -1; // 权值最小的邻接顶点
+        int minWeight = INFINITY; // 设置权值初始值为INFINITY
+
+        // 遍历所有的邻接顶点
+        for(int i = 0; i < vertexNum; i++){
+            // 若dist[i]值为0，表示该顶点已经被纳入顶点集Vt中
+            // 若dist[i]值为INFINITY，表示顶点i与当前选择的顶点并不邻接
+            if(dist[i] != 0 && dist[i] < minWeight){
+                minWeight = dist[i]; // 更新最小权值
+                minIndex = i; // 更新最小权值对应的顶点
+            }
+        }
+
+        if(minWeight == INFINITY){
+            // 若没有顶点与当前选择顶点邻接，则返回-1
+            return ERROR;
+        }
+        else{
+            return minIndex;
+        }
+    }
+
+    public int prim(){
+        dist = new int[vertexNum];
+        parent = new int[vertexNum];
+        MyEdgeNode edgeNode = new MyEdgeNode();
+
+        // 默认情况下，当前选择的顶点的下标为0
+        for(int i = 0; i < vertexNum; i++){
+            dist[i] = weights[0][i]; // 若顶点i与顶点0不邻接，那么它们的权重是INFINITY
+            parent[i] = 0; // 这里假设所有顶点的父节点为顶点0
+        }
+
+        int totalWeight = 0; // 权重和
+        int vertexCount = 0; // 统计纳入顶点集Vt的顶点数
+
+        // 构建一个包含所有顶点，但没有边的图
+        // 一颗最小生成树一共有n个顶点和n-1条边
+        mst = new MyAdjacencyListGraph<>(vertexNum, vertexNum - 1);
+
+        // 选择当前顶点为顶点0，并将顶点0加入当前树中
+        dist[0] = 0;
+        vertexCount++;
+        parent[0] = -1; // 设置顶点0为当前树的根节点
+
+        while(true){
+            // 从当前选择的顶点出发，寻找权值最小的邻接点
+            int minIndex = findMinDist(dist);
+            if(minIndex == ERROR){
+                break;
+            }
+
+            // 将顶点minIndex, 和<parent[minIndex], minIndex>插入最小生成树中
+            edgeNode.setVertex1(parent[minIndex]);
+            edgeNode.setVertex2(minIndex);
+            edgeNode.setWeight(dist[minIndex]);
+            mst.insertEdge(edgeNode);
+
+            // 更新最小权重和
+            totalWeight += dist[minIndex];
+            // 设置顶点minIndex为当前选择的顶点，并把顶点minIndex加入当前树中
+            dist[minIndex] = 0;
+            vertexCount++;
+
+            // 更新与当前选择顶点的邻接权值
+            for(int i = 0; i < vertexNum; i++){
+                if(dist[i] != 0 && weights[minIndex][i] != INFINITY){
+                    if(weights[minIndex][i] < dist[i]){
+                        dist[i] = weights[minIndex][i];
+                        parent[i] = minIndex;
+                    }
+                }
+            }
+        }
+        if(vertexCount < vertexCount){
+            totalWeight = ERROR;
+        }
+        return totalWeight;
+    }
+
+    public MyAdjacencyListGraph<AnyType> getMst() {
+        return mst;
+    }
+
+    public int[] getDist() {
+        return dist;
+    }
+
+    public int[] getParent() {
+        return parent;
     }
 }
