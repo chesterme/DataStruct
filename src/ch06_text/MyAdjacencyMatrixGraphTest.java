@@ -30,6 +30,10 @@ public class MyAdjacencyMatrixGraphTest {
             }
             myGraph.getMGraph().printAll();
         }
+
+        int startIndex = 0;
+//        myGraph.getMGraph().bfs(startIndex);
+        myGraph.getMGraph().dfs(startIndex);
     }
 
 }
