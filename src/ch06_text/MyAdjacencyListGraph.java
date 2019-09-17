@@ -109,11 +109,16 @@ public class MyAdjacencyListGraph<AnyType> {
             int deleteIndex = queue.dequeue();
             // 将被删除顶点的所有未被访问的邻接顶点入队
             MyAdjacencyListNode next = graph[deleteIndex].getFirstEdge();
-            while(next != null && !visits[next.getIndex()]){
-                visit(next.getIndex());
-                visits[next.getIndex()] = true;
-                queue.enqueue(next.getIndex());
-                next = next.getNext();
+            while(next != null){
+                while(next != null && visits[next.getIndex()]){
+                    next = next.getNext();
+                }
+                if(next != null){
+                    visit(next.getIndex());
+                    visits[next.getIndex()] = true;
+                    queue.enqueue(next.getIndex());
+                    next = next.getNext();
+                }
             }
         }
     }
