@@ -9,7 +9,7 @@ public class MyDirectedAcyclicGraphTest {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        File file = new File("resources/dag.txt");
+        File file = new File("resources/dag2.txt");
         FileReader reader = new FileReader(file);
         Scanner scanner = new Scanner(reader);
 
@@ -51,9 +51,18 @@ public class MyDirectedAcyclicGraphTest {
 
         System.out.println("++++++++++++++++++++++++++++++");
         System.out.println("拓扑排序内容为：");
+        graph.topSort();
         int[] topOrder = graph.getTopOrder();
         for(int i = 0; i < topOrder.length; i++){
-            System.out.printf("顶点的下标为：%d, 顶点的内容为：%s\n", i, graph.getGraph()[i].getData());
+            System.out.printf("顶点的下标为：%d, 顶点的内容为：%s\n", i, graph.getGraph()[topOrder[i]].getData());
+        }
+
+        System.out.println("++++++++++++++++++++++++++++++");
+        System.out.println("拓扑排序内容为：");
+        graph.topSort2();
+        int[] topOrder2 = graph.getTopOrder();
+        for(int i = 0; i < topOrder2.length; i++){
+            System.out.printf("顶点的下标为：%d, 顶点的内容为：%s\n", i, graph.getGraph()[topOrder2[i]].getData());
         }
     }
 

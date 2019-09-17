@@ -1,13 +1,17 @@
 package ch06_text;
 
+import ch03_text.MyLinkedQueue;
+
 /**
  * 使用邻接表表示有向无环图
  */
 public class MyDirectedAcyclicGraph<AnyType> extends MyAdjacencyListGraph<AnyType> {
 
     private int[] inDegree; // 统计图中每个顶点对应的入度
+    private int[] inDegreeBackup; // inDegree数组的备份
     private int[] topOrder; // 保存拓扑排序的顺序
     private boolean[] visited; // 标志已经输出的顶点
+    private MyLinkedQueue<Integer> queue; // 保存入度为0的顶点
 
     /**
      * 构造函数
@@ -19,23 +23,34 @@ public class MyDirectedAcyclicGraph<AnyType> extends MyAdjacencyListGraph<AnyTyp
         topOrder = new int[vertexNumber];
         inDegree = new int[vertexNumber];
         visited = new boolean[vertexNumber];
-        initInDegree(vertexNumber);
-        initTopOrder(vertexNumber);
-        initVisited(vertexNumber);
+        inDegreeBackup = new int[vertexNumber];
+        initInDegreeBackup();
+        initTopOrder();
+        initVisited();
     }
 
-    private void initInDegree(int vertexNumber){
-        for(int i = 0; i < vertexNumber; i++){
-            inDegree[i] = 0;
+    private void initInDegreeBackup(){
+        for(int i = 0; i < inDegreeBackup.length; i++){
+            inDegreeBackup[i] = 0;
         }
     }
-    private void initVisited(int vertexNumber){
-        for(int i = 0; i < vertexNumber; i++){
+
+    private void initQueue(){
+        queue = new MyLinkedQueue<>();
+    }
+
+    private void initInDegree(){
+        for(int i = 0; i < inDegree.length; i++){
+            inDegree[i] = inDegreeBackup[i];
+        }
+    }
+    private void initVisited(){
+        for(int i = 0; i < visited.length; i++){
             visited[i] = false;
         }
     }
-    private void initTopOrder(int vertexNumber){
-        for(int i = 0; i < vertexNumber; i++){
+    private void initTopOrder(){
+        for(int i = 0; i < topOrder.length; i++){
             topOrder[i] = 0;
         }
     }
@@ -53,7 +68,7 @@ public class MyDirectedAcyclicGraph<AnyType> extends MyAdjacencyListGraph<AnyTyp
         getGraph()[edge.getVertex1()].setFirstEdge(node);
 
         // 更新顶点v2的入度
-        inDegree[edge.getVertex2()]++;
+        inDegreeBackup[edge.getVertex2()]++;
     }
 
     /**
@@ -92,6 +107,7 @@ public class MyDirectedAcyclicGraph<AnyType> extends MyAdjacencyListGraph<AnyTyp
      * @return 算法是否成功
      */
     public boolean topSort(){
+        initInDegree();
         int topIndex = 0; // 拓扑排序结果数组的当前下标
 
         while(topIndex < topOrder.length){
@@ -122,5 +138,41 @@ public class MyDirectedAcyclicGraph<AnyType> extends MyAdjacencyListGraph<AnyTyp
 
     public int[] getTopOrder() {
         return topOrder;
+    }
+
+    /**
+     * 拓扑排序改进版
+     * @return
+     */
+    public boolean topSort2(){
+        initInDegree();
+        initQueue();
+        initTopOrder();
+        int topIndex = 0; // 拓扑排序结果列表的当前下标
+        // 遍历整个inDegree数组，将所有入度为0的顶点入队
+        for(int i = 0; i < inDegree.length; i++){
+            if (inDegree[i] == 0){
+                queue.enqueue(i);
+            }
+        }
+
+        while(!queue.isEmpty()){
+            int deleteIndex = queue.dequeue();
+            topOrder[topIndex++] = deleteIndex;
+            // 修改顶点deleteIndex的邻接顶点的入度
+            MyAdjacencyListNode tempNode = getGraph()[deleteIndex].getFirstEdge();
+            while(tempNode != null){
+                inDegree[tempNode.getIndex()]--;
+                // 如果邻接顶点的入度等于0，则将该邻接顶点的下标入队
+                if(inDegree[tempNode.getIndex()] == 0){
+                    queue.enqueue(tempNode.getIndex());
+                }
+                tempNode = tempNode.getNext();
+            }
+        }
+        if(topIndex < topOrder.length){
+            return false;
+        }
+        return true;
     }
 }
