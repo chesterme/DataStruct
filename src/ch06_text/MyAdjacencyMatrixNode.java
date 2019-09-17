@@ -19,6 +19,9 @@ public class MyAdjacencyMatrixNode<AnyType> {
     private MyAdjacencyListGraph<AnyType> mst; // 使用邻接表表示最小生成树
     private int[] dist;
     private int[] parent;
+    private boolean[] collected; // 表示图中各顶点是否已经纳入最短路径的顶点集中
+    private int[] minimumDist; // 图中各顶点到源顶点的最短路径
+    private int[] path; // 表示图中各顶点到源顶点的最短路径
 
     public MyAdjacencyMatrixNode(int vertexNum, int edgeNum){
         this.vertexNum = vertexNum;
@@ -317,4 +320,89 @@ public class MyAdjacencyMatrixNode<AnyType> {
         return currentIndex;
     }
 
+
+    /**
+     * 在Vx集合中查找一个顶点，它到源顶点V0的路径最短
+     * 其中Vx集合是图顶点集V除去已经纳入最短路径的顶点集后剩下的顶点集
+     * @return 图中一个顶点，它到源顶点V0的路径最短
+     */
+    private int findMinDistInVx() {
+        int minDist = INFINITY;
+        int minIndex = ERROR;
+        // 遍历整个图
+        for (int i = 0; i < vertexNum; i++) {
+            if (collected[i] != true && minimumDist[i] < minDist) {
+                minDist = minimumDist[i];
+                minIndex = i;
+            }
+        }
+        return minIndex;
+    }
+
+    /**
+     * 使用dijkstra算法构建图中各顶点到源顶点的最短路径
+     * @param startIndex，源顶点
+     * @return 算法是否成功
+     */
+    public boolean dijkstra(int startIndex){
+        collected = new boolean[vertexNum];
+        minimumDist = new int[vertexNum];
+        path = new int[vertexNum];
+
+        for(int i = 0; i < vertexNum; i++){
+            minimumDist[i] = weights[startIndex][i];
+            // 如果顶点i与顶点startIndex相邻接
+            if(minimumDist[i] < INFINITY){
+                path[i] = startIndex;
+            }
+            else{
+                path[i] = -1;
+            }
+            // 默认情况下，所有顶点都没有纳入最短路径的顶点集中
+            collected[i] = false;
+        }
+
+        // 设置源顶点
+        collected[startIndex] = true;
+        minimumDist[startIndex] = 0;
+
+        // 将图的各个顶点纳入最短路径的顶点集Vt
+        while(true){
+            // 从顶点集Vx中选择一个顶点，它到源顶点的距离最短
+            int minIndex = findMinDistInVx();
+            if(minIndex == ERROR){
+                break;
+            }
+            // 将顶点minIndex纳入最短路径集
+            collected[minIndex] = true;
+            // 更新剩余顶点到源顶点的距离
+            for(int i = 0; i < vertexNum; i++){
+                // 如果顶点i与顶点minIndex邻接，并且顶点i还没有被纳入最短路径集
+                if(weights[minIndex][i] < INFINITY && collected[i] != true){
+                    if(weights[minIndex][i] < 0){
+                        // 如果存在负权值，则不适合使用该算法
+                        return false;
+                    }
+                    // 如果纳入顶点i使得它到源顶点的路径变短，则需要更新minimumDist和path
+                    if(minimumDist[minIndex] + weights[minIndex][i] < minimumDist[i]){
+                        minimumDist[i] = minimumDist[minIndex] + weights[minIndex][i]; // 更新顶点i到源顶点的最短路径
+                        path[i] = minIndex; // 使得顶点i的的父顶点是顶点minIndex
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean[] getCollected() {
+        return collected;
+    }
+
+    public int[] getMinimumDist() {
+        return minimumDist;
+    }
+
+    public int[] getPath() {
+        return path;
+    }
 }

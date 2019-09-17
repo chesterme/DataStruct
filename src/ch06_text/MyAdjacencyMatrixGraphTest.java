@@ -34,24 +34,47 @@ public class MyAdjacencyMatrixGraphTest {
                 edgeNode.setWeight(scanner.nextInt());
                 myGraph.insertEdge(edgeNode);
             }
+            System.out.println("++++++++++++++++++++++++++");
+            System.out.println("图的邻接矩阵为：");
             myGraph.getMGraph().printAll();
         }
 
         int startIndex = 0;
 //        myGraph.getMGraph().bfs(startIndex);
+        System.out.println("++++++++++++++++++++++++++");
+        System.out.println("图的深度优先搜索为：");
         myGraph.getMGraph().dfs(startIndex);
 
         System.out.println("++++++++++++++++++++++++++");
 //        int totalWeight = myGraph.getMGraph().prim();
         int totalWeight = myGraph.getMGraph().kruskal();
         System.out.println("最小权值和为：" + totalWeight);
+
         System.out.println("++++++++++++++++++++++++++");
         System.out.println("最小生成树为：");
         int[] parent = myGraph.getMGraph().getParent();
         for(int i = 0; i < parent.length; i++){
             System.out.printf("下标为：%10d\t，其值为：%10d\n", i, parent[i]);
         }
+
         System.out.println("++++++++++++++++++++++++++");
+        System.out.printf("图中各个顶点到源顶点%d, 的最短路径为：\n", startIndex);
+        myGraph.getMGraph().dijkstra(startIndex);
+        int[] path = myGraph.getMGraph().getPath();
+        for(int i = 0; i < path.length; i++){
+            System.out.printf("下标为：%10d\t，其值为：%10d\n", i, path[i]);
+        }
+
+        System.out.println("++++++++++++++++++++++++++");
+        System.out.printf("图中各个顶点到源顶点%d, 的最短路径大小为：\n", startIndex);
+        myGraph.getMGraph().dijkstra(startIndex);
+        int[] minimumDist = myGraph.getMGraph().getMinimumDist();
+        for(int i = 0; i < path.length; i++){
+            System.out.printf("下标为：%10d\t，其值为：%10d\n", i, minimumDist[i]);
+        }
+
+        System.out.println("++++++++++++++++++++++++++");
+        System.out.println("图的广度优先搜索为：");
         MyAdjacencyListGraph<String> mst = myGraph.getMGraph().getMst();
         mst.bfs(startIndex);
     }
