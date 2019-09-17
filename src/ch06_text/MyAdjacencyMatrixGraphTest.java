@@ -42,7 +42,8 @@ public class MyAdjacencyMatrixGraphTest {
         myGraph.getMGraph().dfs(startIndex);
 
         System.out.println("++++++++++++++++++++++++++");
-        int totalWeight = myGraph.getMGraph().prim();
+//        int totalWeight = myGraph.getMGraph().prim();
+        int totalWeight = myGraph.getMGraph().kruskal();
         System.out.println("最小权值和为：" + totalWeight);
         System.out.println("++++++++++++++++++++++++++");
         System.out.println("最小生成树为：");

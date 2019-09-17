@@ -1,6 +1,7 @@
 package ch06_text;
 
 import ch03_text.MyLinkedQueue;
+import ch04_text.MyMinHeap;
 
 /**
  * 使用邻接矩阵表示图中各顶点之间的关系
@@ -16,8 +17,8 @@ public class MyAdjacencyMatrixNode<AnyType> {
     private AnyType[] data; // 顶点数据
     private boolean[] visits; // 标志节点是否已经被访问了
     private MyAdjacencyListGraph<AnyType> mst; // 使用邻接表表示最小生成树
-    private int[] dist; // 保存顶点Vj到顶点集Vt的边的最小权值
-    private int[] parent; // 保存当前树的顶点生长过程
+    private int[] dist;
+    private int[] parent;
 
     public MyAdjacencyMatrixNode(int vertexNum, int edgeNum){
         this.vertexNum = vertexNum;
@@ -169,9 +170,13 @@ public class MyAdjacencyMatrixNode<AnyType> {
         }
     }
 
+    /**
+     * prim算法实现的最小生成树
+     * @return 返回该最小生成树的权值总和
+     */
     public int prim(){
-        dist = new int[vertexNum];
-        parent = new int[vertexNum];
+        dist = new int[vertexNum]; // 保存顶点Vj到顶点集Vt的边的最小权值
+        parent = new int[vertexNum]; // 保存当前树的顶点生长过程
         MyEdgeNode edgeNode = new MyEdgeNode();
 
         // 默认情况下，当前选择的顶点的下标为0
@@ -238,4 +243,78 @@ public class MyAdjacencyMatrixNode<AnyType> {
     public int[] getParent() {
         return parent;
     }
+
+    /**
+     * 使用kruskal算法实现的最小生成树
+     * @return 最小生成树的权值总和
+     */
+    public int kruskal(){
+        parent = new int[vertexNum]; // 使用一个数组来表示一个集合，用来判断两个顶点是否属于同一颗树
+        // 图中的每个顶点默认情况下，是不属于同一个集合的
+        for(int i = 0; i < vertexNum; i++){
+            parent[i] = -1;
+        }
+
+        // 生成一个只包含顶点集，不包含边集的连接表图
+        mst = new MyAdjacencyListGraph<>(vertexNum, edgeNum -1);
+
+        // 使用最小堆保存图中所有的边集
+        MyMinHeap<MyEdgeNode> minHeap = new MyMinHeap<>(new MyEdgeNodeComparator());
+        for(int i = 0; i < vertexNum; i++){
+            for(int j = i + 1; j < vertexNum; j++){
+                if(isEdge(i, j)){
+                    minHeap.insert(new MyEdgeNode(i, j, weights[i][j]));
+                }
+            }
+        }
+
+        int vertexCount = 1; // 统计最小生成树的顶点数
+        int minWeight = 0;
+        while(vertexCount < vertexNum && !minHeap.isEmpty()){
+            // 选择一条权值最小的边
+            MyEdgeNode tempNode = minHeap.deleteMin();
+            int vertex1 = tempNode.getVertex1();
+            int vertex2 = tempNode.getVertex2();
+            // 查找这两个顶点是否在同一颗树下
+            int root1 = findRoot(vertex1);
+            int root2 = findRoot(vertex2);
+            // 如果这两个顶点不构成回路，则将它们合并到同一颗树中
+            if(root1 != root2){
+                union(root1, root2);
+                mst.insertEdge(tempNode);
+                vertexCount++;
+                minWeight += tempNode.getWeight();
+            }
+        }
+        return minWeight;
+    }
+
+    /**
+     * 初始化顶点访问标志
+     */
+    private void initVisits(){
+        for(int i = 0; i < vertexNum; i++){
+            visits[i] = false;
+        }
+    }
+
+    /**
+     * 合并两个顶点到树中
+     * @param index1，顶点1
+     * @param index2，顶点2
+     */
+    private void union(int index1, int index2){
+        parent[index2] = index1;
+    }
+
+    /**
+     * 返回该元素所在集合的根元素
+     * @param currentIndex
+     * @return
+     */
+    private int findRoot(int currentIndex){
+        for(; parent[currentIndex] != -1; currentIndex = parent[currentIndex]);
+        return currentIndex;
+    }
+
 }
