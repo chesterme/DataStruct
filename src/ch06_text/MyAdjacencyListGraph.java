@@ -100,6 +100,7 @@ public class MyAdjacencyListGraph<AnyType> {
      * @param index，开始搜索的起始位置
      */
     public void bfs(int index){
+        initVisits();
         MyLinkedQueue<Integer> queue = new MyLinkedQueue<>();
         visit(index);
         visits[index] = true; // 标志该顶点已经被访问了
@@ -120,6 +121,12 @@ public class MyAdjacencyListGraph<AnyType> {
                     next = next.getNext();
                 }
             }
+        }
+    }
+
+    private void initVisits(){
+        for(int i = 0; i < vertexNumber; i++){
+            visits[i] = false;
         }
     }
 }
