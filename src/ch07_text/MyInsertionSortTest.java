@@ -30,8 +30,8 @@ public class MyInsertionSortTest {
         Integer[] result = insertionSort.getInput();
         for(int i = 0; i < result.length; i++){
             out.printf("%5d", result[i]);
-            if(i % 10 == 0 && i != 0){
-                out.println();
+            if(i % 10 == 0){
+                System.out.println();
             }
         }
 
