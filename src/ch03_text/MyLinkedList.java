@@ -58,6 +58,11 @@ public class MyLinkedList<AnyType> implements Iterable<AnyType> {
         return size == 0;
     }
 
+    // 从线性表的头部添加信息
+    public void add(AnyType data){
+        insert(1, data);
+    }
+
     // 在链表的第i位置上插入一个节点newNode
     public void insert(int i, AnyType data){
         // 判断i是否合适
@@ -157,6 +162,24 @@ public class MyLinkedList<AnyType> implements Iterable<AnyType> {
             }
 
         }
+    }
+
+    public AnyType[] toArray(){
+        AnyType[] result = (AnyType[]) new Object[size];
+        int index = 0;
+        Node<AnyType> tempNode = header.next;
+        while(tempNode != null){
+            result[index++] = tempNode.data;
+            if(tempNode.next == tail){
+                break;
+            }
+            tempNode = tempNode.next;
+        }
+        return result;
+    }
+
+    public int getSize(){
+        return size;
     }
 
     @Override
