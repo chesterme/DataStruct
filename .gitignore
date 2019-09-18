@@ -5,3 +5,5 @@ out/
 .vscode/
 .gitignore
 DataStruct.iml
+// 排序使用的数据文件
+resources/randomDigital.txt
