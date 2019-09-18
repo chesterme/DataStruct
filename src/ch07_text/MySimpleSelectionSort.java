@@ -26,6 +26,10 @@ public class MySimpleSelectionSort<AnyType> {
                 if(comparator.compare(input[j], input[min]) < 0){
                     min = j;
                 }
+                // 如果相等，则不需要进行交换
+                else if(comparator.compare(input[j], input[min]) == 0){
+                    continue;
+                }
             }
             temp = input[i];
             input[i] = input[min];
