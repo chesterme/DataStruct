@@ -15,11 +15,11 @@ public class GenerateRandomDigital {
         }
         FileWriter write = new FileWriter(file);
 
-        int infinity = 1000000;
+        int infinity = 10000000;
         int value = 0;
         Random random = new Random(System.currentTimeMillis());
         for(int i = 0; i < infinity; i++){
-            value = random.nextInt(1000);
+            value = random.nextInt(Integer.MAX_VALUE);
             if(value % 3 == 0){
                 value = value *  -1;
             }
